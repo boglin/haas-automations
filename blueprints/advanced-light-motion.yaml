@@ -11,12 +11,25 @@ blueprint:
         entity:
           filter:
             domain: binary_sensor
+    luminance_entity:
+      name: Light Sensor
+      selector:
+        entity:
     light_target:
       name: Light
       selector:
         target:
           entity:
             domain: light
+    light_level:
+      name: Light level at which to turn on
+      description: Light level at which to turn lights on.
+      default: 15
+      selector:
+        number:
+          min: 0
+          max: 30
+          unit_of_measurement: lx
     no_motion_wait:
       name: Wait time
       description: Time to leave the light on after last motion is detected.
@@ -24,7 +37,7 @@ blueprint:
       selector:
         number:
           min: 0
-          max: 3600
+          max: 600
           unit_of_measurement: seconds
 
 # If motion is detected within the delay,
@@ -37,7 +50,10 @@ trigger:
   entity_id: !input motion_entity
   from: "off"
   to: "on"
-
+condition:
+  - condition: numeric_state
+    entity_id: !input luminance_entity
+    below: !input light_level
 action:
   - alias: "Turn on the light"
     service: light.turn_on

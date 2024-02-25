@@ -66,6 +66,13 @@ action:
       to: "off"
   - alias: "Wait the number of seconds that has been set"
     delay: !input no_motion_wait
+  - alias: ""
+    service: light.turn_on
+    target: !input light_target
+    data:
+      brightness_pct: 50
+  - alias: "Wait the number of seconds that has been set"
+    delay: !input no_motion_wait
   - alias: "Turn off the light"
     service: light.turn_off
     target: !input light_target

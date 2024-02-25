@@ -30,6 +30,15 @@ blueprint:
           min: 0
           max: 30
           unit_of_measurement: lx
+    courtesy_wait:
+      name: Courtesy Wait time
+      description: Time to dim the light before turning off.
+      default: 30
+      selector:
+        number:
+          min: 0
+          max: 600
+          unit_of_measurement: seconds
     no_motion_wait:
       name: Wait time
       description: Time to leave the light on after last motion is detected.
@@ -39,6 +48,7 @@ blueprint:
           min: 0
           max: 600
           unit_of_measurement: seconds
+
 
 # If motion is detected within the delay,
 # we restart the script.
@@ -58,6 +68,8 @@ action:
   - alias: "Turn on the light"
     service: light.turn_on
     target: !input light_target
+    data:
+      brightness_pct: 100
   - alias: "Wait until there is no motion from device"
     wait_for_trigger:
       platform: state
@@ -66,13 +78,13 @@ action:
       to: "off"
   - alias: "Wait the number of seconds that has been set"
     delay: !input no_motion_wait
-  - alias: ""
+  - alias: "Courtesy Light"
     service: light.turn_on
     target: !input light_target
     data:
       brightness_pct: 50
   - alias: "Wait the number of seconds that has been set"
-    delay: !input no_motion_wait
+    delay: !input courtesy_wait
   - alias: "Turn off the light"
     service: light.turn_off
     target: !input light_target
